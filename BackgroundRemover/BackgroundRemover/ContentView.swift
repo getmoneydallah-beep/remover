@@ -9,6 +9,7 @@ struct ContentView: View {
     @State private var errorMessage: String?
     @State private var showingSaveAlert = false
     @State private var saveSuccess = false
+    @StateObject private var rewardedAdManager = RewardedAdManager()
 
     var body: some View {
         NavigationStack {
@@ -65,13 +66,13 @@ struct ContentView: View {
 
                     if processedImage != nil {
                         Button {
-                            saveImage()
+                            showRewardedAdAndSave()
                         } label: {
                             Label("Save", systemImage: "square.and.arrow.down")
                                 .frame(maxWidth: .infinity)
                         }
                         .buttonStyle(.borderedProminent)
-                        .disabled(isProcessing)
+                        .disabled(isProcessing || rewardedAdManager.isShowingAd)
                     }
                 }
                 .padding(.horizontal)
@@ -118,6 +119,18 @@ struct ContentView: View {
         }
 
         isProcessing = false
+    }
+
+    private func showRewardedAdAndSave() {
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let rootViewController = windowScene.windows.first?.rootViewController else {
+            saveImage()
+            return
+        }
+
+        rewardedAdManager.showAd(from: rootViewController) {
+            saveImage()
+        }
     }
 
     private func saveImage() {
