@@ -11,6 +11,8 @@
 		A1000003211A0003000A0001 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000004211A0004000A0001 /* ContentView.swift */; };
 		A1000005211A0005000A0001 /* BackgroundRemovalService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000006211A0006000A0001 /* BackgroundRemovalService.swift */; };
 		A1000007211A0007000A0001 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1000008211A0008000A0001 /* Assets.xcassets */; };
+		A100001B211A001B000A0001 /* AdBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100001A211A001A000A0001 /* AdBannerView.swift */; };
+		A100001D211A001D000A0001 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = A100001C211A001C000A0001 /* GoogleMobileAds */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,6 +22,7 @@
 		A1000008211A0008000A0001 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A1000009211A0009000A0001 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A100000A211A000A000A0001 /* BackgroundRemover.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BackgroundRemover.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A100001A211A001A000A0001 /* AdBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdBannerView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -27,6 +30,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A100001D211A001D000A0001 /* GoogleMobileAds in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -47,6 +51,7 @@
 				A1000002211A0002000A0001 /* BackgroundRemoverApp.swift */,
 				A1000004211A0004000A0001 /* ContentView.swift */,
 				A1000006211A0006000A0001 /* BackgroundRemovalService.swift */,
+				A100001A211A001A000A0001 /* AdBannerView.swift */,
 				A1000008211A0008000A0001 /* Assets.xcassets */,
 				A1000009211A0009000A0001 /* Info.plist */,
 			);
@@ -77,6 +82,9 @@
 			dependencies = (
 			);
 			name = BackgroundRemover;
+			packageProductDependencies = (
+				A100001C211A001C000A0001 /* GoogleMobileAds */,
+			);
 			productName = BackgroundRemover;
 			productReference = A100000A211A000A000A0001 /* BackgroundRemover.app */;
 			productType = "com.apple.product-type.application";
@@ -105,6 +113,9 @@
 				Base,
 			);
 			mainGroup = A100000C211A000C000A0001;
+			packageReferences = (
+				A1000019211A0019000A0001 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
+			);
 			productRefGroup = A100000E211A000E000A0001 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -133,6 +144,7 @@
 				A1000001211A0001000A0001 /* BackgroundRemoverApp.swift in Sources */,
 				A1000003211A0003000A0001 /* ContentView.swift in Sources */,
 				A1000005211A0005000A0001 /* BackgroundRemovalService.swift in Sources */,
+				A100001B211A001B000A0001 /* AdBannerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -338,6 +350,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		A1000019211A0019000A0001 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A100001C211A001C000A0001 /* GoogleMobileAds */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A1000019211A0019000A0001 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
+			productName = GoogleMobileAds;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 	};
 	rootObject = A1000013211A0013000A0001 /* Project object */;

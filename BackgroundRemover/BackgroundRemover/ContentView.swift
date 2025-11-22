@@ -75,7 +75,10 @@ struct ContentView: View {
                     }
                 }
                 .padding(.horizontal)
-                .padding(.bottom)
+
+                // AdMob Banner
+                AdBannerView()
+                    .padding(.bottom, 8)
             }
             .navigationTitle("Background Remover")
             .onChange(of: selectedItem) { _, newItem in
