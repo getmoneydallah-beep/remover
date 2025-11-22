@@ -2,10 +2,16 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+    <key>CFBundleDevelopmentRegion</key>
+    <string>ar</string>
+    <key>CFBundleLocalizations</key>
+    <array>
+        <string>ar</string>
+    </array>
     <key>NSPhotoLibraryUsageDescription</key>
-    <string>We need access to your photo library to select images for background removal.</string>
+    <string>نحتاج إلى الوصول إلى مكتبة الصور لاختيار الصور لإزالة الخلفية.</string>
     <key>NSPhotoLibraryAddUsageDescription</key>
-    <string>We need permission to save processed images to your photo library.</string>
+    <string>نحتاج إلى إذن لحفظ الصور المعالجة في مكتبة الصور.</string>
     <key>GADApplicationIdentifier</key>
     <string>ca-app-pub-3940256099942544~1458002511</string>
     <key>SKAdNetworkItems</key>

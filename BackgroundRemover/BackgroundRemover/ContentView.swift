@@ -10,89 +10,152 @@ struct ContentView: View {
     @State private var showingSaveAlert = false
     @State private var saveSuccess = false
     @StateObject private var rewardedAdManager = RewardedAdManager()
+    @Environment(\.colorScheme) var colorScheme
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 20) {
-                if let processedImage {
-                    Image(uiImage: processedImage)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(maxHeight: 400)
-                        .background(
-                            Image(systemName: "checkerboard.rectangle")
+            ScrollView {
+                VStack(spacing: 24) {
+                    // Header
+                    VStack(spacing: 8) {
+                        Text("إزالة الخلفية")
+                            .font(.system(size: 32, weight: .bold, design: .rounded))
+                            .foregroundStyle(.primary)
+
+                        Text("اختر صورة لإزالة خلفيتها تلقائياً")
+                            .font(.system(size: 15, weight: .regular))
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding(.top, 20)
+                    .frame(maxWidth: .infinity)
+
+                    // Image Display Area
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(colorScheme == .dark ? Color(.systemGray6) : Color(.systemGray6))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .strokeBorder(
+                                        colorScheme == .dark ? Color(.systemGray4) : Color(.systemGray4),
+                                        style: StrokeStyle(lineWidth: 1, dash: [8])
+                                    )
+                            )
+
+                        if let processedImage {
+                            Image(uiImage: processedImage)
                                 .resizable()
-                                .foregroundStyle(.gray.opacity(0.3))
-                        )
-                        .cornerRadius(12)
-                        .padding()
-                } else if let originalImage {
-                    Image(uiImage: originalImage)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(maxHeight: 400)
-                        .cornerRadius(12)
-                        .padding()
-                } else {
-                    ContentUnavailableView(
-                        "No Image Selected",
-                        systemImage: "photo.badge.plus",
-                        description: Text("Select an image to remove its background")
-                    )
-                    .frame(maxHeight: 400)
-                }
+                                .scaledToFit()
+                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                                .padding(16)
+                        } else if let originalImage {
+                            Image(uiImage: originalImage)
+                                .resizable()
+                                .scaledToFit()
+                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                                .padding(16)
+                        } else {
+                            VStack(spacing: 16) {
+                                Image(systemName: "photo.on.rectangle.angled")
+                                    .font(.system(size: 48))
+                                    .foregroundStyle(.secondary)
 
-                if isProcessing {
-                    ProgressView("Removing background...")
-                        .padding()
-                }
-
-                if let errorMessage {
-                    Text(errorMessage)
-                        .foregroundStyle(.red)
-                        .font(.caption)
-                        .padding()
-                }
-
-                Spacer()
-
-                HStack(spacing: 16) {
-                    PhotosPicker(selection: $selectedItem, matching: .images) {
-                        Label("Select Image", systemImage: "photo.on.rectangle")
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.bordered)
-                    .disabled(isProcessing)
-
-                    if processedImage != nil {
-                        Button {
-                            showRewardedAdAndSave()
-                        } label: {
-                            Label("Save", systemImage: "square.and.arrow.down")
-                                .frame(maxWidth: .infinity)
+                                Text("لم يتم اختيار صورة")
+                                    .font(.system(size: 15, weight: .medium))
+                                    .foregroundStyle(.secondary)
+                            }
                         }
-                        .buttonStyle(.borderedProminent)
-                        .disabled(isProcessing || rewardedAdManager.isShowingAd)
-                    }
-                }
-                .padding(.horizontal)
 
-                // AdMob Banner
-                AdBannerView()
-                    .padding(.bottom, 8)
+                        if isProcessing {
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(.ultraThinMaterial)
+
+                            VStack(spacing: 12) {
+                                ProgressView()
+                                    .scaleEffect(1.2)
+                                Text("جارِ إزالة الخلفية...")
+                                    .font(.system(size: 14, weight: .medium))
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                    .frame(height: 320)
+                    .padding(.horizontal, 20)
+
+                    if let errorMessage {
+                        HStack(spacing: 8) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .foregroundStyle(.red)
+                            Text(errorMessage)
+                                .font(.system(size: 13))
+                                .foregroundStyle(.red)
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 12)
+                        .background(Color.red.opacity(0.1))
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .padding(.horizontal, 20)
+                    }
+
+                    // Action Buttons
+                    VStack(spacing: 12) {
+                        PhotosPicker(selection: $selectedItem, matching: .images) {
+                            HStack(spacing: 10) {
+                                Image(systemName: "photo.badge.plus")
+                                    .font(.system(size: 16, weight: .semibold))
+                                Text("اختر صورة")
+                                    .font(.system(size: 16, weight: .semibold))
+                            }
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 50)
+                            .background(colorScheme == .dark ? Color(.systemGray5) : Color(.systemGray6))
+                            .foregroundStyle(.primary)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                        }
+                        .disabled(isProcessing)
+
+                        if processedImage != nil {
+                            Button {
+                                showRewardedAdAndSave()
+                            } label: {
+                                HStack(spacing: 10) {
+                                    Image(systemName: "square.and.arrow.down")
+                                        .font(.system(size: 16, weight: .semibold))
+                                    Text("حفظ الصورة")
+                                        .font(.system(size: 16, weight: .semibold))
+                                }
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 50)
+                                .background(Color.accentColor)
+                                .foregroundStyle(.white)
+                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                            }
+                            .disabled(isProcessing || rewardedAdManager.isShowingAd)
+                        }
+                    }
+                    .padding(.horizontal, 20)
+
+                    Spacer(minLength: 20)
+                }
             }
-            .navigationTitle("Background Remover")
+            .background(colorScheme == .dark ? Color(.systemBackground) : Color(.systemBackground))
+            .environment(\.layoutDirection, .rightToLeft)
             .onChange(of: selectedItem) { _, newItem in
                 Task {
                     await loadAndProcessImage(from: newItem)
                 }
             }
-            .alert("Image Saved", isPresented: $showingSaveAlert) {
-                Button("OK", role: .cancel) {}
+            .alert("تم الحفظ", isPresented: $showingSaveAlert) {
+                Button("حسناً", role: .cancel) {}
             } message: {
-                Text(saveSuccess ? "The image has been saved to your photo library." : "Failed to save image.")
+                Text(saveSuccess ? "تم حفظ الصورة في مكتبة الصور." : "فشل في حفظ الصورة.")
+            }
+            .safeAreaInset(edge: .bottom) {
+                AdBannerView()
+                    .frame(height: 50)
+                    .background(colorScheme == .dark ? Color(.systemBackground) : Color(.systemBackground))
             }
         }
+        .tint(.primary)
     }
 
     private func loadAndProcessImage(from item: PhotosPickerItem?) async {
@@ -104,7 +167,7 @@ struct ContentView: View {
         do {
             guard let data = try await item.loadTransferable(type: Data.self),
                   let image = UIImage(data: data) else {
-                errorMessage = "Failed to load image"
+                errorMessage = "فشل في تحميل الصورة"
                 return
             }
 
