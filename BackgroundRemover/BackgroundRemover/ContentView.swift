@@ -12,6 +12,9 @@ struct ContentView: View {
     @StateObject private var rewardedAdManager = RewardedAdManager()
     @Environment(\.colorScheme) var colorScheme
 
+    private let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+    private let notificationFeedback = UINotificationFeedbackGenerator()
+
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -112,6 +115,7 @@ struct ContentView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                         }
                         .disabled(isProcessing)
+                        .accessibilityLabel("اختر صورة من المعرض")
 
                         if processedImage != nil {
                             Button {
@@ -130,9 +134,16 @@ struct ContentView: View {
                                 .clipShape(RoundedRectangle(cornerRadius: 12))
                             }
                             .disabled(isProcessing || rewardedAdManager.isShowingAd)
+                            .accessibilityLabel("حفظ الصورة بعد مشاهدة إعلان")
                         }
                     }
                     .padding(.horizontal, 20)
+
+                    // Version info
+                    Text("الإصدار 1.0")
+                        .font(.system(size: 11))
+                        .foregroundStyle(.tertiary)
+                        .padding(.bottom, 8)
 
                     Spacer(minLength: 20)
                 }
@@ -173,12 +184,15 @@ struct ContentView: View {
 
             originalImage = image
             isProcessing = true
+            impactFeedback.impactOccurred()
 
             let result = try await BackgroundRemovalService.shared.removeBackground(from: image)
             processedImage = result
+            notificationFeedback.notificationOccurred(.success)
 
         } catch {
             errorMessage = error.localizedDescription
+            notificationFeedback.notificationOccurred(.error)
         }
 
         isProcessing = false
@@ -202,6 +216,7 @@ struct ContentView: View {
         UIImageWriteToSavedPhotosAlbum(processedImage, nil, nil, nil)
         saveSuccess = true
         showingSaveAlert = true
+        notificationFeedback.notificationOccurred(.success)
     }
 }
 
