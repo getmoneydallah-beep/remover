@@ -8,8 +8,8 @@ class RewardedAdManager: NSObject, ObservableObject, GADFullScreenContentDelegat
     private var rewardedAd: GADRewardedAd?
     private var onRewardEarned: (() -> Void)?
 
-    // Test ad unit ID - replace with your real ad unit ID for production
-    private let adUnitID = "ca-app-pub-3940256099942544/1712485313"
+    // Production ad unit ID
+    private let adUnitID = "ca-app-pub-9859448804641254/5953022069"
 
     override init() {
         super.init()
@@ -80,8 +80,8 @@ struct BannerAdView: UIViewRepresentable {
 }
 
 struct AdBannerView: View {
-    // Test ad unit ID - replace with your real ad unit ID for production
-    private let adUnitID = "ca-app-pub-3940256099942544/2934735716"
+    // Production ad unit ID
+    private let adUnitID = "ca-app-pub-9859448804641254/2404659295"
 
     var body: some View {
         BannerAdView(adUnitID: adUnitID)
