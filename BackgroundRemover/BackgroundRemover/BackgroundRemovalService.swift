@@ -4,9 +4,8 @@ class BackgroundRemovalService {
 
     static let shared = BackgroundRemovalService()
 
-    private let apiURL = "https://background-removal4.p.rapidapi.com/v1/results?mode=fg-image"
-    private let apiKey = "23fae3591emsh5fc120247ac2d0ap1994c9jsnfa6ff3008b3c"
-    private let apiHost = "background-removal4.p.rapidapi.com"
+    private let apiURL = "https://api.remove.bg/v1.0/removebg"
+    private let apiKey = "yJCxfkwcTGbVW7bqksJNFMmS"
 
     private init() {}
 
@@ -19,17 +18,21 @@ class BackgroundRemovalService {
         var request = URLRequest(url: URL(string: apiURL)!)
         request.httpMethod = "POST"
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-        request.setValue(apiHost, forHTTPHeaderField: "x-rapidapi-host")
-        request.setValue(apiKey, forHTTPHeaderField: "x-rapidapi-key")
+        request.setValue(apiKey, forHTTPHeaderField: "X-Api-Key")
 
         var body = Data()
 
         // Add image data
         body.append("--\(boundary)\r\n".data(using: .utf8)!)
-        body.append("Content-Disposition: form-data; name=\"image\"; filename=\"image.jpg\"\r\n".data(using: .utf8)!)
+        body.append("Content-Disposition: form-data; name=\"image_file\"; filename=\"image.jpg\"\r\n".data(using: .utf8)!)
         body.append("Content-Type: image/jpeg\r\n\r\n".data(using: .utf8)!)
         body.append(imageData)
         body.append("\r\n".data(using: .utf8)!)
+
+        // Add size parameter
+        body.append("--\(boundary)\r\n".data(using: .utf8)!)
+        body.append("Content-Disposition: form-data; name=\"size\"\r\n\r\n".data(using: .utf8)!)
+        body.append("auto\r\n".data(using: .utf8)!)
 
         // Close boundary
         body.append("--\(boundary)--\r\n".data(using: .utf8)!)
@@ -43,18 +46,18 @@ class BackgroundRemovalService {
         }
 
         guard httpResponse.statusCode == 200 else {
+            // Try to parse error message
+            if let errorJson = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+               let errors = errorJson["errors"] as? [[String: Any]],
+               let firstError = errors.first,
+               let title = firstError["title"] as? String {
+                throw BackgroundRemovalError.apiErrorMessage(title)
+            }
             throw BackgroundRemovalError.apiError(statusCode: httpResponse.statusCode)
         }
 
-        // Parse JSON response
-        let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
-        guard let results = json?["results"] as? [[String: Any]],
-              let firstResult = results.first,
-              let entities = firstResult["entities"] as? [[String: Any]],
-              let firstEntity = entities.first,
-              let base64String = firstEntity["image"] as? String,
-              let imageData = Data(base64Encoded: base64String),
-              let resultImage = UIImage(data: imageData) else {
+        // Response is the PNG image directly
+        guard let resultImage = UIImage(data: data) else {
             throw BackgroundRemovalError.invalidResponse
         }
 
@@ -66,18 +69,21 @@ enum BackgroundRemovalError: LocalizedError {
     case invalidImage
     case networkError
     case apiError(statusCode: Int)
+    case apiErrorMessage(String)
     case invalidResponse
 
     var errorDescription: String? {
         switch self {
         case .invalidImage:
-            return "The selected image is invalid"
+            return "الصورة المحددة غير صالحة"
         case .networkError:
-            return "Network error occurred"
+            return "حدث خطأ في الاتصال"
         case .apiError(let statusCode):
-            return "API error: \(statusCode)"
+            return "خطأ في الخدمة: \(statusCode)"
+        case .apiErrorMessage(let message):
+            return message
         case .invalidResponse:
-            return "Invalid response from server"
+            return "استجابة غير صالحة من الخادم"
         }
     }
 }
