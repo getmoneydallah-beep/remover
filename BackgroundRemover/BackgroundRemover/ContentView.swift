@@ -117,6 +117,25 @@ struct ContentView: View {
                         .disabled(isProcessing)
                         .accessibilityLabel("اختر صورة من المعرض")
 
+                        // Demo Mode Button
+                        Button {
+                            loadDemoImage()
+                        } label: {
+                            HStack(spacing: 10) {
+                                Image(systemName: "play.circle")
+                                    .font(.system(size: 16, weight: .semibold))
+                                Text("تجربة مع صورة نموذجية")
+                                    .font(.system(size: 16, weight: .semibold))
+                            }
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 50)
+                            .background(colorScheme == .dark ? Color(.systemGray6) : Color(.systemGray5))
+                            .foregroundStyle(.secondary)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                        }
+                        .disabled(isProcessing)
+                        .accessibilityLabel("تجربة التطبيق بصورة نموذجية")
+
                         if processedImage != nil {
                             Button {
                                 showRewardedAdAndSave()
@@ -217,6 +236,31 @@ struct ContentView: View {
         saveSuccess = true
         showingSaveAlert = true
         notificationFeedback.notificationOccurred(.success)
+    }
+
+    private func loadDemoImage() {
+        guard let demoImage = UIImage(named: "DemoImages") else {
+            errorMessage = "صورة التجربة غير متوفرة"
+            return
+        }
+
+        errorMessage = nil
+        processedImage = nil
+        originalImage = demoImage
+        isProcessing = true
+        impactFeedback.impactOccurred()
+
+        Task {
+            do {
+                let result = try await BackgroundRemovalService.shared.removeBackground(from: demoImage)
+                processedImage = result
+                notificationFeedback.notificationOccurred(.success)
+            } catch {
+                errorMessage = error.localizedDescription
+                notificationFeedback.notificationOccurred(.error)
+            }
+            isProcessing = false
+        }
     }
 }
 

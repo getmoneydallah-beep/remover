@@ -12,6 +12,8 @@
     <string>نحتاج إلى الوصول إلى مكتبة الصور لاختيار الصور لإزالة الخلفية.</string>
     <key>NSPhotoLibraryAddUsageDescription</key>
     <string>نحتاج إلى إذن لحفظ الصور المعالجة في مكتبة الصور.</string>
+    <key>NSUserTrackingUsageDescription</key>
+    <string>نستخدم بياناتك لعرض إعلانات مخصصة وتحسين تجربتك في التطبيق.</string>
     <key>GADApplicationIdentifier</key>
     <string>ca-app-pub-9859448804641254~3746371560</string>
     <key>SKAdNetworkItems</key>
